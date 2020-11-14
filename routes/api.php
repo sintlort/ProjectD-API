@@ -26,3 +26,7 @@ Route::get('/test-data', function (){
 });
 Route::post('/add-project-api','App\Http\Controllers\androidAPIController@addProject');
 Route::get('/get-project','App\Http\Controllers\androidAPIController@getProject');
+Route::post('/select-a-project','App\Http\Controllers\androidAPIController@selectaProject');
+Route::post('/update-project','App\Http\Controllers\androidAPIController@updateProject');
+Route::post('/stop-project','App\Http\Controllers\androidAPIController@stopProject');
+Route::post('/delete-project','App\Http\Controllers\androidAPIController@deleteProject');

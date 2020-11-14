@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class tb_project extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $table = 'tb_project';
 
     /**
@@ -33,5 +35,9 @@ class tb_project extends Model
      * @var array
      */
     protected $casts = [
+    ];
+
+    protected $dates = [
+        'deleted_at',
     ];
 }

@@ -18,13 +18,13 @@ class androidAPIController extends Controller
         if($val != null){
             if (Hash::check($data_login->password, $val->password)){
                 $user = new user_collecting(tb_user::where('username',$data_login->username)->first());
-                $returndata = array('error'=>"false",'message'=>'success','user'=>$user);
+                $returndata = array('status'=>"200",'message'=>'success','user'=>$user);
                 return response()->json($returndata,200);
             }else{
-                return response()->json("data not found",500);
+                $returndata = array('status'=>"200",'message'=>'password is wrong');
             };
         }else{
-          return response()->json("data not found",500);
+            $returndata = array('status'=>"200",'message'=>'cannot find the user');
         };
     }
 
@@ -43,10 +43,10 @@ class androidAPIController extends Controller
                     'telp'=>$data_register->telp,
                 ]);
                 $user = new user_collecting(tb_user::where('username',$data_register->username)->first());
-                $returndata = array('error'=>"false",'message'=>'success','user'=>$user);
+                $returndata = array('status'=>"200",'message'=>'success','user'=>$user);
                 return response()->json($returndata,200);
             } else {
-                $returnerrordata = array('error'=>"true",'message'=>'username has been used');
+                $returnerrordata = array('status'=>"200",'message'=>'username has been used');
                 return response()->json($returnerrordata, 200);
             }
     }
@@ -71,5 +71,47 @@ class androidAPIController extends Controller
         $alldata = project_collector::collection(tb_project::all());
         $project = array('status'=>'200','message'=>'success','project'=>project_collector::collection(tb_project::all()));
         return response()->json($project, 200);
+    }
+
+    public function selectaProject(Request $request){
+
+        if(tb_project::find($request->id)!=null){
+            $projectData = new project_collector(tb_project::where('id',$request->id)->first());
+            $returnData = array('status'=>"200",'message'=>'success','data'=>$projectData);
+            return response()->json($returnData,200);
+        }else{
+            $returnData = array('status'=>"200",'message'=>'project not found');
+            return response()->json($returnData,200);
+        }
+    }
+
+    public function updateProject(Request $request){
+        $project = tb_project::where('id',$request->id)->first();
+        $project->nama_project=$request->nama_project;
+        $project->start_project=$request->start_project;
+        $project->end_project=$request->end_project;
+        $project->desc_project=$request->desc_project;
+        $project->no_hp=$request->no_hp;
+        $project->max_orang=$request->max_orang;
+        $project->save();
+        $newDataProject = new project_collector(tb_project::where('id',$request->id)->first());
+        $returnData = array('status'=>"200",'message'=>'data updated','data'=>$newDataProject);
+        return response()->json($returnData,200);
+    }
+
+    public function stopProject(Request $request){
+        $dataProject = tb_project::where('id',$request->id)->first();
+        $dataProject->status_project=0;
+        $dataProject->save();
+        $newDataProject = new project_collector(tb_project::where('id',$request->id)->first());
+        $returnData = array('status'=>"200",'message'=>'project stopped','data'=>$newDataProject);
+        return response()->json($returnData,200);
+    }
+
+    public function deleteProject(Request $request){
+        $deleteProject = tb_project::find($request->id);
+        $deleteProject->delete();
+        $returnData = array('status'=>"200",'message'=>'project deleted');
+        return response()->json($returnData,200);
     }
 }
