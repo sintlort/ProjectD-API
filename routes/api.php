@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 Route::post('/login-api','App\Http\Controllers\androidAPIController@loginAPI');
 Route::post('/register-api','App\Http\Controllers\androidAPIController@registerAPI');
 Route::get('/test-data', function (){
@@ -30,3 +31,10 @@ Route::post('/select-a-project','App\Http\Controllers\androidAPIController@selec
 Route::post('/update-project','App\Http\Controllers\androidAPIController@updateProject');
 Route::post('/stop-project','App\Http\Controllers\androidAPIController@stopProject');
 Route::post('/delete-project','App\Http\Controllers\androidAPIController@deleteProject');
+
+Route::post('/add-mahasiswa','App\Http\Controllers\ProgmobLanjutAPI@addMahasiswa');
+Route::post('/show-mahasiswa','App\Http\Controllers\ProgmobLanjutAPI@showMahasiswa');
+Route::get('/show-all-mahasiswa','App\Http\Controllers\ProgmobLanjutAPI@showallMahasiswa');
+
+Route::post('/project-history','App\Http\Controllers\androidAPIController@dataProject');
+Route::post('/my-project','App\Http\Controllers\androidAPIController@getMyProject');

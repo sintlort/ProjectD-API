@@ -40,4 +40,14 @@ class tb_project extends Model
     protected $dates = [
         'deleted_at',
     ];
+
+    public function assignment()
+    {
+        return $this->hasMany(tb_detail_project::class,'id_project','id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(tb_user::class,'user_id','id');
+    }
 }

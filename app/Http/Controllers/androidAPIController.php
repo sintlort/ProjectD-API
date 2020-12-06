@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\detail_project_resource;
 use App\Http\Resources\project_collector;
+use App\Http\Resources\projectResource;
 use App\Http\Resources\user_collecting;
+use App\Http\Resources\UserResource;
+use App\Models\tb_detail_project;
 use App\Models\tb_project;
 use App\Models\tb_user;
 use Illuminate\Http\Request;
@@ -69,8 +73,8 @@ class androidAPIController extends Controller
 
     public function getProject() {
         $alldata = project_collector::collection(tb_project::all());
-        $project = array('status'=>'200','message'=>'success','project'=>project_collector::collection(tb_project::all()));
-        return response()->json($project, 200);
+        //$project = array('status'=>'200','message'=>'success','project'=>project_collector::collection(tb_project::all()));
+        return response()->json($alldata, 200);
     }
 
     public function selectaProject(Request $request){
@@ -113,5 +117,19 @@ class androidAPIController extends Controller
         $deleteProject->delete();
         $returnData = array('status'=>"200",'message'=>'project deleted');
         return response()->json($returnData,200);
+    }
+
+    public function dataProject(Request $request)
+    {
+        $data = projectResource::collection(tb_project::with('assignment')->where('id',$request->id)->get());
+        $historyProject = detail_project_resource::collection(tb_detail_project::with('project')->where('id_project',$request->id)->get());
+        $testdata = tb_detail_project::with('project')->where('id_project',$request->id)->get();
+        return response()->json(["data"=>$data],200);
+    }
+
+    public function getMyProject(Request $request)
+    {
+        $myProject = UserResource::collection(tb_user::with('project')->where('id',$request->id)->get());
+        return response()->json(['status'=>'200','data'=>$myProject],200);
     }
 }

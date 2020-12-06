@@ -36,4 +36,14 @@ class tb_user extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function project()
+    {
+        return $this->hasMany(tb_project::class,'user_id','id');
+    }
+
+    public function assignment()
+    {
+        return $this->hasMany(tb_detail_project::class,'id_user','id');
+    }
 }
