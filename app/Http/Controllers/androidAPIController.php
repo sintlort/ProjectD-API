@@ -132,4 +132,15 @@ class androidAPIController extends Controller
         $myProject = UserResource::collection(tb_user::with('project')->where('id',$request->id)->get());
         return response()->json(['status'=>'200','data'=>$myProject],200);
     }
+
+    public function joinProject(Request $request)
+    {
+        $joinProject = tb_detail_project::create([
+            'id_project'=>$request->id_project,
+            'id_user'=>$request->id_user,
+            'nama'=>$request->nama,
+            'noHp'=>$request->noHp,
+        ]);
+        return response()->json(['status'=>'200','message'=>'Berhasil']);
+    }
 }
