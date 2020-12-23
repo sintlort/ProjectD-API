@@ -10,8 +10,11 @@ use App\Http\Resources\UserResource;
 use App\Models\tb_detail_project;
 use App\Models\tb_project;
 use App\Models\tb_user;
+use Validator;
+use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class androidAPIController extends Controller
 {
@@ -54,8 +57,32 @@ class androidAPIController extends Controller
                 return response()->json($returnerrordata, 200);
             }
     }
+    public function getProject() {
+        $alldata = tb_project::all();
+        //$project = array('status'=>'200','message'=>'success','project'=>project_collector::collection(tb_project::all()));
+        return response()->json($alldata, 200);
+    }
 
     public function addProject(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'nama_project'=>'required',
+            'start_project'=>'required',
+            'end_project'=>'required',
+            'desc_project'=>'required',
+            'status_project'=>'required',
+            'no_hp'=>'required',
+            'max_orang'=>'required',
+            'username'=>'required',
+            'encoded_image'=>'required'
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        $imageName = Str::random(10).'.'.'png';
+        File::put(public_path().'/project_images/'.$imageName, base64_decode($request->encoded_image));
         $user_id = tb_user::where('username',$request->username)->first();
         $data = tb_project::create([
             'nama_project'=>$request->nama_project,
@@ -66,16 +93,12 @@ class androidAPIController extends Controller
             'no_hp'=>$request->no_hp,
             'max_orang'=>$request->max_orang,
             'user_id'=>$user_id->id,
+            'project_image'=>$imageName,
         ]);
-        $project = array('status'=>'200','message'=>'success','project'=>new project_collector($data));
+        $project = array('status'=>'200','message'=>'success','project'=>$data);
         return response()->json($project,200);
     }
 
-    public function getProject() {
-        $alldata = project_collector::collection(tb_project::all());
-        //$project = array('status'=>'200','message'=>'success','project'=>project_collector::collection(tb_project::all()));
-        return response()->json($alldata, 200);
-    }
 
     public function selectaProject(Request $request){
 
@@ -84,8 +107,8 @@ class androidAPIController extends Controller
             $returnData = array('status'=>"200",'message'=>'success','data'=>$projectData);
             return response()->json($returnData,200);
         }else{
-            $returnData = array('status'=>"200",'message'=>'project not found');
-            return response()->json($returnData,200);
+            $returnData = array('status'=>'401','message'=>'project not found');
+            return response()->json($returnData,401);
         }
     }
 
@@ -98,7 +121,7 @@ class androidAPIController extends Controller
         $project->no_hp=$request->no_hp;
         $project->max_orang=$request->max_orang;
         $project->save();
-        $newDataProject = new project_collector(tb_project::where('id',$request->id)->first());
+        $newDataProject = tb_project::where('id',$request->id)->first();
         $returnData = array('status'=>"200",'message'=>'data updated','data'=>$newDataProject);
         return response()->json($returnData,200);
     }
@@ -143,4 +166,28 @@ class androidAPIController extends Controller
         ]);
         return response()->json(['status'=>'200','message'=>'Berhasil']);
     }
+
+    public function detailUserInAProject(Request $request){
+        $detailProject = tb_detail_project::where('id_project',$request->id_project)->get();
+
+        foreach ($detailProject as $key => $detail) {
+            $user = tb_user::find($detail->id_user);
+            $data[$key] = $user;
+        }
+        return response()->json($data, 200);
+    }
+
+    public function detailUserHistoryProject(Request $request){
+
+        $detailProject = tb_detail_project::where('id_user',$request->id_user)->get();
+
+        foreach ($detailProject as $key => $detail) {
+            $project = tb_project::find($detail->id_project);
+            $data[$key] = $project;
+        }
+
+        return response()->json($data, 200);
+
+    }
+
 }

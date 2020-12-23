@@ -38,3 +38,9 @@ Route::get('/show-all-mahasiswa','App\Http\Controllers\ProgmobLanjutAPI@showallM
 
 Route::post('/project-history','App\Http\Controllers\androidAPIController@dataProject');
 Route::post('/my-project','App\Http\Controllers\androidAPIController@getMyProject');
+
+Route::post('/stop-my-project','App\Http\Controllers\androidAPIController@stopProject');
+
+Route::post('/detail-user-in-a-project','App\Http\Controllers\androidAPIController@detailUserInAProject'); //Post id_project
+
+Route::post('/detail-user-history-project','App\Http\Controllers\androidAPIController@detailUserHistoryProject'); //Post id_user
